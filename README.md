@@ -26,8 +26,12 @@ III. STATA instructions:
 IV. Data Sources
 
 https://www.fbi.gov/how-we-can-help-you/more-fbi-services-and-information/ucr/publications?utm_source=chatgpt.com
+
 https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/arrest
+
 https://www.rand.org/research/gun-policy/gun-ownership.html
+
 https://fred.stlouisfed.org/help/about/about-fred/what-is-fred
+
 https://www.fhfa.gov/data/hpi
 
