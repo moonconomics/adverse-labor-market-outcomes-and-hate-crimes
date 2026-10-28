@@ -15,7 +15,7 @@ III. Codes
 
 •	Append-data.R		
 
-III. STATA instructions:
+IV. STATA instructions:
 
 1.	Open STATA. 
 2.	Open the replication zip folder.
@@ -23,7 +23,7 @@ III. STATA instructions:
 4.	From STATA, open the file final.do.
 5.	Follow the instructions on final.do. Make sure to install the necessary packages needed to run the regressions. 
 
-IV. Data Sources
+V. Data Sources
 
 https://www.fbi.gov/how-we-can-help-you/more-fbi-services-and-information/ucr/publications?utm_source=chatgpt.com
 
