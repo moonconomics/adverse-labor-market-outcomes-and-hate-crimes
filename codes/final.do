@@ -30,7 +30,7 @@ ssc install xtabond2
 	label var cU "The initial unemployment claims rate"
 
 	gen arrests=(police_arrests/ population)					
-	label var arrests "Arrests rate per Capita"					
+	label var arrests "Arrests rate per capita"					
 
 	gen adjhate = (hate/.4)	
 	label var adjhate "Measurement-error adjusted hate crime rate"
