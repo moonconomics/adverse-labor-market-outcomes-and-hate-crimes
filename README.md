@@ -35,14 +35,10 @@ III. STATA instructions:
 
 IV. Data Sources
 
-https://www.bea.gov/data/gdp/gdp-state
+https://www.fbi.gov/how-we-can-help-you/more-fbi-services-and-information/ucr/publications?utm_source=chatgpt.com
 
-https://www.bts.gov/browse-statistical-products-and-data/state-transportation-statistics/us-airline-traffic-airport
-
-https://databank.worldbank.org/source/world-development-indicators/preview/on
+https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/arrest
 
 https://fred.stlouisfed.org/
 
-https://finance.yahoo.com/
-https://usatradeonline.census.gov/home
-
+https://www.rand.org/research/gun-policy/gun-ownership.html
