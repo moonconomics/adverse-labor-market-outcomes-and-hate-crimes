@@ -17,7 +17,7 @@ I. Main data
 
 II. do files, R scripts
 
-•	codes.do		
+•	final.do		
 
 •	Append-data.R		
 
