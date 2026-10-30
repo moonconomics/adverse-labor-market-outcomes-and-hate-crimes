@@ -1,37 +1,27 @@
-
-I. Instructions 
-
-This file provides guidelines for replicating all the empirical results found in this study. The replication files are located in a folder called replication. The latter includes three subfolders named raw_data, codes, and rscripts. The raw_data folder includes three files. An Excel file (raw-hate-crime-data.xlsx) that shows the raw observations for hate crimes. Secondly, it includes another Excel file (imputation calculations.xlsx) that shows how the missing and zero estimates are imputed. Lastly, the raw_data folder includes a STATA file named raw-data.dta; this is the main dataset to be used for the study.
-
-The codes folder includes a file named final.do. This file provides all the instructions to compute the regressions, tables, and figures listed in the paper. I used RStudio to append the FBI's UCR data into one large Excel file. Instead of having to look for all the data in PDF files, this study contributes to the literature by making the FBI’s UCR data easily available. You can access the script file (Append-data.R) in a folder named rscripts. The latter also reports the total number of incidents reported by each state in a folder called Total incidents.
-
-II. Main data
-
+README
+Title: Adverse labor market outcomes and hate crimes 
+Authors: Moon Oulatta, Ph.D. in economics
+email: oulatta@niler.org 
+_________________________________________________________
+Description 
+This file provides guidelines for replicating all the empirical results presented in this study. The replication files are located in a folder named replication, which contains three subfolders: raw_data, codes, and rscripts. The raw_data folder contains three files. The first is an Excel file (raw-hate-crime-data.xlsx) containing the raw observations on hate crimes. The second is another Excel file (imputation calculations.xlsx) showing how missing and zero estimates are imputed. Lastly, the raw_data folder contains a Stata file named raw-data.dta, which is the main dataset used in this study.
+The codes folder contains a file named final.do, which provides all the instructions needed to generate the regressions, tables, and figures presented in the paper. I used RStudio to append the FBI's Uniform Crime Reporting (UCR) data into a single data file. Instead of spending time searching and extracting data from individual PDF files, this study contributes to the literature by making the UCR data more easily accessible. The corresponding R script (Append-data.R) is available in a folder named rscripts. This folder also contains a subfolder named Total incidents, which reports the total number of incidents reported by each state.
+I. Main data
 •	raw-data.dta
-
-III. Codes
-
-•	codes.do	
-
+	II. do files, R scripts
+•	codes.do		
 •	Append-data.R		
-
-IV. STATA instructions:
-
+III. STATA instructions:
 1.	Open STATA. 
 2.	Open the replication zip folder.
-3.	Copy all the folders from the replication zip folder and paste them onto your desktop.
+3.	Copy all the folders from the replication zip folder and paste them on your desktop.
 4.	From STATA, open the file final.do.
 5.	Follow the instructions on final.do. Make sure to install the necessary packages needed to run the regressions. 
-
-V. Data Sources
-
-https://www.fbi.gov/how-we-can-help-you/more-fbi-services-and-information/ucr/publications?utm_source=chatgpt.com
-
-https://cde.ucr.cjis.gov/LATEST/webapp/#/pages/explorer/crime/arrest
-
-https://www.rand.org/research/gun-policy/gun-ownership.html
-
-https://fred.stlouisfed.org/help/about/about-fred/what-is-fred
-
-https://www.fhfa.gov/data/hpi
+IV. Data Sources
+https://www.bea.gov/data/gdp/gdp-state
+https://www.bts.gov/browse-statistical-products-and-data/state-transportation-statistics/us-airline-traffic-airport
+https://databank.worldbank.org/source/world-development-indicators/preview/on
+https://fred.stlouisfed.org/
+https://finance.yahoo.com/
+https://usatradeonline.census.gov/home
 
