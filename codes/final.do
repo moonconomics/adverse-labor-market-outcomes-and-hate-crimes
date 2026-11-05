@@ -440,18 +440,19 @@ _______________________________________________________________________________
 gen cUsq= cU^2
 gen outsq= out^(2)
 gen Usq= U^2
+gen mwageq= (mwage)^2
 
 * Generate time dummies
 tab years, gen(time_) 
 
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (U Usq = l4.U l4.Usq mwage), r fe first
+xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (U Usq = l4.U l4.Usq mwage mwageq), r fe first
  estimates store panel1
 
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (cU cUsq = l5.cU l5.cUsq  mwage), r fe first
+xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (cU cUsq = l2.cU l2.cUsq  mwage mwageq), r fe first
  estimates store panel2
  
 
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (out outsq = l4.out l4.outsq mwage), r fe first
+xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (out outsq = l4.out l4.outsq mwage mwageq), r fe first
  estimates store panel3
 
 * Table 5
