@@ -7,10 +7,6 @@ from where you can access all the raw files, just execute the do file.
 */
 
 
-*				 Set the directory and load the raw data 
-
-cd "C:\Users\moonc\Desktop\Social Sciences and Humanities Open (Final)\replication\raw_data"
-use "raw-data.dta", clear 		
 
 * Using STATA 16 or higher, please install the following packages:
 ssc install ranktest
@@ -21,6 +17,11 @@ ssc install estout
 ssc install xtabond2
 
 
+*				 Set the directory and load the raw data 
+
+cd "C:\Users\moonc\Desktop\Social Sciences and Humanities Open (Final)\replication\raw_data"
+use "raw-data.dta", clear 		
+
 						* Compute the key variables 
 
 	gen hate= (totalnumberofincidentsreported/ populationcovered)*100000
@@ -30,7 +31,7 @@ ssc install xtabond2
 	label var cU "The initial unemployment claims rate"
 
 	gen arrests=(police_arrests/ population)					
-	label var arrests "Arrests rate per capita"					
+	label var arrests "Arrests rate per 100,000"					
 
 	gen adjhate = (hate/.4)	
 	label var adjhate "Measurement-error adjusted hate crime rate"
@@ -44,10 +45,13 @@ ssc install xtabond2
 	gen density=log(population/area)
 	label var density "Log-level population per square miles"
 	
+	gen policy= 1 if state_used_federal_mwage=="FALSE"
+	replace policy= 0 if policy==.
+	label var policy "1 equals states with state-specific minimum wage policy, 0 otherwise"
 	
 							* Set up the panel data
 							
-keep years states U out cU hate adjhate arrests mwage hprice density growth guns						
+keep years states U out cU hate adjhate arrests mwage hprice density growth guns policy						
 save "final-data.dta", replace
 
 encode states, gen(sc)	
@@ -462,7 +466,7 @@ esttab panel1 panel2 panel3 using table5.tex, star(* 0.10 ** 0.05 *** .01)  cell
 
 /*______________________________________________________________________________ 
 
-								V. Robustness check
+								V. Additional controls 
 ________________________________________________________________________________
 */
 
@@ -484,8 +488,18 @@ estimates store check5
 xtabond2 hate l1.hate c.out##c.out i.years mwage density, gmm(l1.hate density, lag(1 1) collapse) gmm(c.out##c.out,lag(2 5) collapse) iv(i.years mwage) r orthogonal small two 
 estimates store check6
 
+xtabond2 hate l1.hate c.U##c.U i.years mwage policy, gmm(l1.hate, lag(1 2) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check7
 
-esttab check1 check2 check3 check4 check5 check6 using table6.tex, star(* 0.10 ** 0.05 *** .01)  cells(b(fmt(3) star) ci(fmt(3) par))replace
+xtabond2 hate l1.hate c.cU##c.cU i.years mwage policy, gmm(l1.hate, lag(1 1) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check8
+
+xtabond2 hate l1.hate c.out##c.out i.years mwage policy, gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 4) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check9
+
+
+
+esttab check1 check2 check3 check4 check5 check6 check7 check8 check9 using table6.tex, star(* 0.10 ** 0.05 *** .01)  cells(b(fmt(3) star) ci(fmt(3) par))replace
 
 /*_____________________________________________________________________________ 
 
@@ -525,11 +539,11 @@ ereturn local obw = "`obw'"
 
 end
 
-xtsum2 hate adjhate U cU out mwage hprice arrests guns growth density
+xtsum2 hate adjhate U cU out mwage hprice guns growth density 
 esttab e(mat_all) using table7.tex, mlabels(none) labcol2(`e(obw)') varlabels(r2 " " r3 " ")  replace
 
 
-
+* Note that the summary statistics for arrest was computed separetly, because flordia was not included in the arrest data. 
 
 
 
@@ -682,8 +696,8 @@ xline(`5th', lpattern(dash) lcolor(gs5)) xline(`99th', lpattern(dash) lcolor(gs5
 ********************************************************************************
 * U-shape plots
 graph combine shape_1 shape_2, row(2)
-
-
+* Distribution plots
+graph combine dist_1 dist_2, row(2) xsize(12) ysize(16) imargin(medium) graphregion(color(white))
 /*
 											End
 _________________________________________________________________________________________________________________________________
