@@ -51,7 +51,7 @@ use "raw-data.dta", clear
 	
 							* Set up the panel data
 							
-keep years states U out cU hate adjhate arrests mwage hprice density growth guns policy						
+keep years states U out cU hate adjhate arrests mwage hprice density growth guns policy gini						
 save "final-data.dta", replace
 
 encode states, gen(sc)	
@@ -60,6 +60,20 @@ xtset sc years
 
 /*______________________________________________________________________________
 							 I.  Benchmark results 
+							 
+Note that we get the following warning: Two-step estimated covariance matrix of moments is singular. 
+Using a generalized inverse to calculate optimal weighting matrix for two-step estimation. 
+Difference-in-Sargan/Hansen statistics may be negative.
+
+This is due to a mechanical error: Stata cannot invert the matrix of instruments, 
+probably because of perfect collinearity between some of the time dummies.
+This does not make the results invalid; STATA is still able to estimate the model by using a generalized inverse.
+However, to fix this small issue without changing the model or parameter estimates,
+we can remove the mechanical error by directly removing the first and final time dummies.
+This solves the singular matrix problem. I demonstrate this in the first regressions below.
+  
+
+					 
 ________________________________________________________________________________
 */
 
@@ -79,6 +93,30 @@ estimates store gmm3
 xtabond2 hate l1.hate c.U##c.U i.years guns, gmm(l1.hate, lag(1 1) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(i.years guns) r orthogonal small two
 estimates store gmm4 
 
+
+/* 
+ Here we show that removing the first and final time dummies solves the 
+ singular matrix issue wihtout changing the model or parameter estimates. 
+*/
+
+* Generate time dummies
+tab years, gen(y_) 
+
+xtabond2 hate l1.hate c.U##c.U i.years mwage, gmm(l1.hate, lag(1 2) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(mwage) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+ 
+
+xtabond2 hate l1.hate c.U##c.U  i.years hprice, gmm(l1.hate, lag(1 1) collapse) gmm(c.U##c.U ,lag(2 2) collapse) iv(hprice) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+
+
+xtabond2 hate l1.hate c.U##c.U  i.years arrests if states !="Florida", gmm(l1.hate, lag(1 1) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(arrests) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+
+* Note that Florida is not included in this regression, because it did not report arrests until 2017. 
+* Note that arrest data for wisconsin is zero in 2000, we treat this as a missing observation.  
+
+xtabond2 hate l1.hate c.U##c.U i.years guns, gmm(l1.hate, lag(1 1) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(guns) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two
+
+
+
 * B. (Measurement-error adjusted hate crime estimates) 
 
 xtabond2 adjhate l1.adjhate c.U##c.U i.years mwage, gmm(l1.adjhate, lag(1 2) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(i.years mwage) r orthogonal small two 
@@ -94,6 +132,10 @@ estimates store robust3
 
 xtabond2 adjhate l1.adjhate c.U##c.U i.years guns, gmm(l1.adjhate, lag(1 1) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(i.years guns) r orthogonal small two
 estimates store robust4
+
+
+
+
 
 ********************************************************************************
 
@@ -113,6 +155,24 @@ estimates store gmm7
 
 xtabond2 hate l1.hate c.cU##c.cU i.years guns, gmm(l1.hate, lag(1 2) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(i.years guns) r orthogonal small two
 estimates store gmm8 
+
+/* 
+ Here we show that removing the first and final time dummies solves the 
+ singular matrix issue wihtout changing the model or parameter estimates. 
+*/
+
+xtabond2 hate l1.hate c.cU##c.cU i.years mwage, gmm(l1.hate, lag(1 1) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(mwage) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+
+
+xtabond2 hate l1.hate c.cU##c.cU i.years hprice, gmm(l1.hate, lag(1 1) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(hprice) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+
+xtabond2 hate l1.hate c.cU##c.cU i.years arrests if states !="Florida", gmm(l1.hate, lag(1 1) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(arrests) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two 
+ 
+* Note that Florida is not included in this regression, because it did not report arrests until 2017. 
+* Note that arrest data for wisconsin is zero in 2000, we treat this as a missing observation.  
+
+xtabond2 hate l1.hate c.cU##c.cU i.years guns, gmm(l1.hate, lag(1 2) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(guns) iv(y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19, eq(level)) r orthogonal small two
+
  
 * (Measurement-error adjusted hate crime estimates) 
 
@@ -147,6 +207,26 @@ estimates store gmm11
   
 xtabond2 hate l1.hate c.out##c.out i.years guns, gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 5) collapse) iv(i.years guns) r orthogonal small two
 estimates store gmm12
+
+/* 
+ Here we show that removing the first and final time dummies solves the 
+ singular matrix issue wihtout changing the model or parameter estimates. 
+*/
+
+xtabond2 hate l1.hate c.out##c.out i.years mwage, gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 4) collapse) iv(i.years mwage) r orthogonal small two 
+estimates store gmm9
+
+xtabond2 hate l1.hate c.out##c.out i.years hprice, gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 5) collapse) iv(i.years hprice) r orthogonal small two 
+estimates store gmm10
+
+xtabond2 hate l1.hate c.out##c.out i.years arrests if states !="Florida", gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 6) collapse) iv(i.years arrests) r orthogonal small two 
+estimates store gmm11
+* Note that Florida is not included in this regression, because it did not report arrests until 2017. 
+* Note that arrest data for wisconsin is zero in 2000, we treat this as a missing observation.
+  
+xtabond2 hate l1.hate c.out##c.out i.years guns, gmm(l1.hate, lag(1 1) collapse) gmm(c.out##c.out,lag(2 5) collapse) iv(i.years guns) r orthogonal small two
+estimates store gmm12
+
   
 * (Measurement-error adjusted hate crime estimates) 
 
@@ -441,22 +521,19 @@ _______________________________________________________________________________
 */
 * Generating quadratic terms 
 
-gen cUsq= cU^2
-gen outsq= out^(2)
-gen Usq= U^2
+gen cUq= cU^2
+gen outq= out^(2)
+gen Uq= U^2
 gen mwageq= (mwage)^2
 
-* Generate time dummies
-tab years, gen(time_) 
 
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (U Usq = l4.U l4.Usq mwage mwageq), r fe first
+xtivreg2 hate l2.hate y_1 y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19 y_20 (U Uq = l4.U l4.Uq mwage mwageq), r fe first
  estimates store panel1
 
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (cU cUsq = l2.cU l2.cUsq  mwage mwageq), r fe first
+xtivreg2 hate l2.hate y_1 y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19 y_20 (cU cUq = l2.cU l2.cUq  mwage mwageq), r fe first
  estimates store panel2
  
-
-xtivreg2 hate l2.hate time_1 time_2 time_3 time_4 time_5 time_6 time_7 time_8 time_9 time_10 time_11 time_12 time_13 time_14 time_15 time_16 time_17 time_18 time_19 time_20 (out outsq = l4.out l4.outsq mwage mwageq), r fe first
+xtivreg2 hate l2.hate y_1 y_2 y_3 y_4 y_5 y_6 y_7 y_8 y_9 y_10 y_11 y_12 y_13 y_14 y_15 y_16 y_17 y_18 y_19 y_20 (out outq = l4.out l4.outq mwage mwageq), r fe first
  estimates store panel3
 
 * Table 5
@@ -498,8 +575,16 @@ xtabond2 hate l1.hate c.out##c.out i.years mwage policy, gmm(l1.hate, lag(1 1) c
 estimates store check9
 
 
+xtabond2 hate l1.hate c.U##c.U i.years mwage policy gini, gmm(l1.hate gini, lag(1 2) collapse) gmm(c.U##c.U,lag(2 2) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check10
 
-esttab check1 check2 check3 check4 check5 check6 check7 check8 check9 using table6.tex, star(* 0.10 ** 0.05 *** .01)  cells(b(fmt(3) star) ci(fmt(3) par))replace
+xtabond2 hate l1.hate c.cU##c.cU i.years mwage policy gini, gmm(l1.hate gini, lag(1 2) collapse) gmm(c.cU##c.cU,lag(2 2) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check11
+
+xtabond2 hate l1.hate c.out##c.out i.years mwage policy gini, gmm(l1.hate gini, lag(1 3) collapse) gmm(c.out##c.out,lag(2 6) collapse) iv(i.years mwage policy) r orthogonal small two 
+estimates store check12
+
+esttab check1 check2 check3 check4 check5 check6 check7 check8 check9 check10 check11 check12 using table6.tex, star(* 0.10 ** 0.05 *** .01)  cells(b(fmt(3) star) ci(fmt(3) par))replace
 
 /*_____________________________________________________________________________ 
 
@@ -706,3 +791,4 @@ ________________________________________________________________________________
 
 * Thank you, 
 * Anything is possible in Jesus Christ.
+
